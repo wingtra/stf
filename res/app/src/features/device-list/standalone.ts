@@ -77,7 +77,7 @@ export function openStandalone(device: Device): Window | null {
 
   const watching = isAutomated(device)
   const mode = watching ? '&mode=watch' : ''
-  const popup = window.open(`#/c/${device.serial}?standalone${mode}`, `STF-${device.serial}`, features)
+  const popup = window.open(`${window.location.pathname}#/c/${device.serial}?standalone${mode}`, `STF-${device.serial}`, features)
   if (!popup) {
     return null
   }

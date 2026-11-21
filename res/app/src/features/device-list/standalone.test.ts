@@ -50,6 +50,7 @@ beforeEach(() => {
 afterEach(async() => {
   await Promise.all(popups.splice(0).map(close))
   vi.clearAllTimers()
+  window.history.replaceState(null, '', '/')
   vi.useRealTimers()
   vi.restoreAllMocks()
 })
@@ -57,13 +58,18 @@ afterEach(async() => {
 describe('standalone window ownership', () => {
   it.each([true, false])('preserves watch intent and saves geometry without releasing on reload (automated: %s)', async(automated) => {
     const popup = open(automated ? phone() : manualPhone())
-    expect(vi.mocked(window.open).mock.calls[0]![0]).toBe(`#/c/phone?standalone${automated ? '&mode=watch' : ''}`)
+    expect(vi.mocked(window.open).mock.calls[0]![0]).toBe(`/#/c/phone?standalone${automated ? '&mode=watch' : ''}`)
     message(popup)
     popup.onbeforeunload!(new Event('beforeunload') as BeforeUnloadEvent)
     await vi.advanceTimersByTimeAsync(500)
     expect(actions.release).not.toHaveBeenCalled()
     expect(actions.load).not.toHaveBeenCalled()
     expect(actions.save).toHaveBeenCalledOnce()
+  })
+  it.each([true, false])('opens under the mounted path (automated: %s)', (automated) => {
+    window.history.replaceState(null, '', '/stf/#/devices')
+    open(automated ? phone() : manualPhone())
+    expect(vi.mocked(window.open).mock.calls[0]![0]).toBe(`/stf/#/c/phone?standalone${automated ? '&mode=watch' : ''}`)
   })
   it('releases confirmed manual control after a watch popup actually closes', async() => {
     const popup = open()

@@ -119,3 +119,7 @@ FROM runtime-base AS runtime
 COPY --from=production-dependencies --chown=root:root --chmod=u=rwX,go=rX /build/node_modules/ /app/node_modules/
 COPY --from=bundletool --chown=root:root --chmod=u=rwX,go=rX /opt/bundletool/ /app/bundletool/
 COPY --from=build --chown=root:root --chmod=u=rwX,go=rX /tmp/app/ /app/
+
+# Exercise the packaged middleware with production dependencies.
+RUN --mount=type=bind,source=test/runtime/websocket-cookie-session.test.mjs,target=/app/test/runtime/websocket-cookie-session.test.mjs \
+    node --test test/runtime/websocket-cookie-session.test.mjs

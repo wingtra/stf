@@ -22,7 +22,7 @@ jobs:
       id-token: write
     with:
       tag: latest
-      push: ${{ github.event_name == 'push' }}
+      push: ${{ github.repository == 'DeviceFarmer/stf' && github.event_name == 'push' }}
 
   debian:
     name: Debian image

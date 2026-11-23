@@ -131,6 +131,7 @@ jobs:
         run: npm publish --access public
 
   docker:
+    if: github.repository == 'DeviceFarmer/stf'
     needs: release
     uses: ./.github/workflows/docker-build.yml
     permissions:
